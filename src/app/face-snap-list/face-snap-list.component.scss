@@ -1,0 +1,5 @@
+.faceSnaps-container {
+  display: grid; /* On active le grid */
+  grid-template-columns: repeat(2, 1fr); /* Crée deux colonnes de taille égale */
+  gap: 0; /* Espace entre les éléments. Ajustez selon vos besoins */
+}

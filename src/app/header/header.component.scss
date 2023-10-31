@@ -1,0 +1,32 @@
+header {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  background-color: lightgray;
+  margin: -10px -10px 20px -10px;
+  padding: 15px;
+  box-shadow: lightgray 3px 3px 7px;
+}
+
+h3 {
+  margin: 0 10px;
+}
+
+a {
+  margin: 0 10px;
+  color: black;
+  display: inline;
+}
+
+.active {
+  color: gray;
+  text-decoration: none;
+  cursor: default;
+}
+
+a:not(.active) {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
