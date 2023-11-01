@@ -29,3 +29,17 @@ button {
     font-size: 14px;
   }
 }
+
+form {
+  position: absolute;
+  bottom: 1em;
+  label {
+    padding-right: 10px;
+  }
+  input {
+    color: gray;
+  }
+  input:focus {
+    color: black;
+  }
+}
