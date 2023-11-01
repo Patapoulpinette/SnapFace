@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {map, Observable} from "rxjs";
 import {FaceSnapModel} from "../models/face-snap.model";
+import {FaceSnapsService} from "../services/face-snaps.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-new-face-snap',
@@ -13,8 +15,11 @@ export class NewFaceSnapComponent implements OnInit {
   faceSnapPreview$!: Observable<FaceSnapModel>;
   urlRegex!: RegExp;
 
-  constructor(private formBuilder: FormBuilder) {
-  }
+  constructor(
+    private formBuilder: FormBuilder,
+    private faceSnapService: FaceSnapsService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.urlRegex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)/;
@@ -38,6 +43,7 @@ export class NewFaceSnapComponent implements OnInit {
   }
 
   onSubmitForm() {
-    console.log(this.snapForm.value);
+    this.faceSnapService.addFaceSnap(this.snapForm.value);
+    this.router.navigateByUrl('facesnaps');
   }
 }
