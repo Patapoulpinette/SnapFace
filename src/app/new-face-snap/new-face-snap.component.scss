@@ -64,4 +64,6 @@ button {
 
 button:disabled {
   cursor: default;
+  transform: translate(0, 0);
+  box-shadow: lightgray 3px 3px 7px;
 }

@@ -5,6 +5,14 @@ h2 {
   transform: translate(-50%, -50%);
 }
 
+img {
+  height: 380px;
+  width: 600px;
+  object-fit: cover; /* Couvre la zone de la boîte sans conserver le ratio */
+  object-position: center; /* Positionne le point focal de l'image au centre */
+  box-shadow: 4px 4px 20px lightgray;
+}
+
 .landing-block {
   position: absolute;
   top: 50%;
@@ -24,6 +32,7 @@ button {
   padding: 5px 10px;
   border: none;
   margin-right: 20px;
+  cursor: pointer;
   &:active {
     //transform: translate(1px, 1px);
     font-size: 14px;
