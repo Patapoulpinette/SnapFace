@@ -98,15 +98,15 @@ export class FaceSnapsService {
     const faceSnap = this.getFaceSnapById(faceSnapId);
     snapType === 'snap' ? faceSnap.snaps++ : faceSnap.snaps--;
   }
-}
 
-/*
-https://www.pixelstalk.net/wp-content/uploads/2016/06/Desktop-HD-Nature-Wallpapers-1-620x349.jpg
-https://www.pixelstalk.net/wp-content/uploads/2016/06/Download-hd-nature-wallpaper-620x388.jpg
-https://www.pixelstalk.net/wp-content/uploads/2016/06/Free-Best-HD-Nature-Wallpapers-620x349.jpg
-https://www.pixelstalk.net/wp-content/uploads/2016/06/Free-Download-HD-Nature-Wallpapers-Desktop-620x388.jpg
-https://www.pixelstalk.net/wp-content/uploads/2016/06/Green-Free-Download-HD-Nature-Wallpapers-620x388.jpg
-https://www.pixelstalk.net/wp-content/uploads/2016/06/Green-Nature-HD-Wallpapers-620x388.jpg
-https://www.pixelstalk.net/wp-content/uploads/2016/06/Green-Nature-Lake-with-Waterfall-620x349.jpg
-https://www.pixelstalk.net/wp-content/uploads/2016/06/HD-images-of-nature-download-620x349.jpg
-*/
+  addFaceSnap(formValue: { title: string, description: string, imageUrl: string, location?: string }) {
+    const faceSnap: FaceSnapModel = {
+      ...formValue,
+      snaps: 0,
+      createdDate: new Date(),
+      id: this.faceSnaps[this.faceSnaps.length - 1].id + 1,
+      snapped: false
+    };
+    this.faceSnaps.push(faceSnap);
+  }
+}

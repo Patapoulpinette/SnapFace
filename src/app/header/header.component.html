@@ -1,7 +1,10 @@
 <header>
-  <h3>Snapface</h3>
-  <nav>
-    <a routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-    <a routerLink="facesnaps" routerLinkActive="active">FaceSnaps</a>
-  </nav>
+  <div class="header-content">
+    <h3>Snapface</h3>
+    <nav>
+      <a routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Maison</a>
+      <a routerLink="facesnaps" routerLinkActive="active">FaceSnaps</a>
+    </nav>
+  </div>
+  <button title="nouveau FaceSnap" (click)="onAddNewFaceSnap()">+</button>
 </header>
