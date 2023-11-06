@@ -20,6 +20,10 @@ export class FaceSnapsService {
     return this.httpClient.get<FaceSnapModel>(`http://localhost:3000/facesnaps/${faceSnapId}`);
   }
 
+  createNewFaceSnap(faceSnap: FaceSnapModel): Observable<FaceSnapModel> {
+    return this.httpClient.post<FaceSnapModel>('http://localhost:3000/facesnaps', faceSnap);
+  }
+
   snapFaceSnapById(faceSnapId: number, snapType: 'snap' | 'unsnap'): Observable<FaceSnapModel> {
     return this.getFaceSnapById(faceSnapId).pipe(
       map(faceSnap => ({
@@ -34,14 +38,16 @@ export class FaceSnapsService {
     );
   }
 
-  addFaceSnap(formValue: { title: string, description: string, imageUrl: string, location?: string }) {
-    const faceSnap: FaceSnapModel = {
+  addFaceSnap(formValue: { title: string, description: string, imageUrl: string, location?: string }): Observable<FaceSnapModel> {
+    return this.getAllFaceSnaps().pipe(
+      map((faceSnaps: FaceSnapModel[]) => ({
+      id: faceSnaps[faceSnaps.length - 1].id + 1,
       ...formValue,
       snaps: 0,
       createdDate: new Date(),
-      id: this.faceSnaps[this.faceSnaps.length - 1].id + 1,
       snapped: false
-    };
-    this.faceSnaps.push(faceSnap);
+    })),
+      switchMap((faceSnap) => this.createNewFaceSnap(faceSnap)),
+    )
   }
 }
