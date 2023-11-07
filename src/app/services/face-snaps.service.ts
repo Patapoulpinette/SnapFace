@@ -20,8 +20,12 @@ export class FaceSnapsService {
     return this.httpClient.get<FaceSnapModel>(`http://localhost:3000/facesnaps/${faceSnapId}`);
   }
 
-  createNewFaceSnap(faceSnap: FaceSnapModel): Observable<FaceSnapModel> {
-    return this.httpClient.post<FaceSnapModel>('http://localhost:3000/facesnaps', faceSnap);
+  createNewFaceSnap(newFaceSnap: FaceSnapModel): Observable<FaceSnapModel> {
+    return this.httpClient.post<FaceSnapModel>('http://localhost:3000/facesnaps', newFaceSnap);
+  }
+
+  updateFaceSnap(faceSnapId: number, updatedFaceSnap: FaceSnapModel): Observable<FaceSnapModel> {
+    return this.httpClient.put<FaceSnapModel>(`http://localhost:3000/facesnaps/${faceSnapId}`, updatedFaceSnap);
   }
 
   snapFaceSnapById(faceSnapId: number, snapType: 'snap' | 'unsnap'): Observable<FaceSnapModel> {
@@ -31,10 +35,7 @@ export class FaceSnapsService {
         snaps: faceSnap.snaps + (snapType === 'snap' ? 1 : -1),
         snapped: !faceSnap.snapped
       })),
-      switchMap(updatedFaceSnap => this.httpClient.put<FaceSnapModel>(
-        `http://localhost:3000/facesnaps/${faceSnapId}`,
-        updatedFaceSnap)
-      )
+      switchMap(updatedFaceSnap => this.updateFaceSnap(faceSnapId, updatedFaceSnap))
     );
   }
 
@@ -47,7 +48,7 @@ export class FaceSnapsService {
       createdDate: new Date(),
       snapped: false
     })),
-      switchMap((faceSnap) => this.createNewFaceSnap(faceSnap)),
-    )
+      switchMap((newFaceSnap) => this.createNewFaceSnap(newFaceSnap))
+    );
   }
 }
