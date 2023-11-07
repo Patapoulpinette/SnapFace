@@ -1,16 +1,20 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FaceSnapModel} from "../models/face-snap.model";
 import {FaceSnapsService} from "../services/face-snaps.service";
 import {Lightbox, LightboxConfig} from "ngx-lightbox";
 import {Router} from "@angular/router";
+import {Observable, Subject, takeUntil} from "rxjs";
 
 @Component({
   selector: 'app-face-snap',
   templateUrl: './face-snap.component.html',
   styleUrls: ['./face-snap.component.scss']
 })
-export class FaceSnapComponent {
+export class FaceSnapComponent implements OnInit, OnDestroy {
   @Input() faceSnap!: FaceSnapModel;
+  faceSnap$!: Observable<FaceSnapModel>
+  private unsubscribe$ = new Subject<void>();
+
   constructor(
     private _faceSnapsService: FaceSnapsService,
     private _lightbox: Lightbox,
@@ -21,15 +25,24 @@ export class FaceSnapComponent {
     _lightboxOption.fadeDuration = 0.3;
   }
 
-  onSwitchSnap() {
-    if (this.faceSnap.snapped) {
-      this._faceSnapsService.snapFaceSnapById(this.faceSnap.id, 'unsnap');
-      this.faceSnap.snapped = false;
-    }
-    else {
-      this._faceSnapsService.snapFaceSnapById(this.faceSnap.id, 'snap');
-      this.faceSnap.snapped = true;
-    }
+  ngOnInit() {
+    const snapId = this.faceSnap.id;
+    this.faceSnap$ = this._faceSnapsService.getFaceSnapById(snapId);
+  }
+
+  onSwitchSnap(faceSnapId: number) {
+    this._faceSnapsService.getFaceSnapById(faceSnapId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (faceSnap: FaceSnapModel) => {
+          if (faceSnap.snapped) {
+            this.faceSnap$ = this._faceSnapsService.snapFaceSnapById(faceSnapId, 'unsnap');
+          }
+          else {
+            this.faceSnap$ = this._faceSnapsService.snapFaceSnapById(faceSnapId, 'snap');
+          }
+        }
+      );
   }
 
   onViewFaceSnap() {
@@ -44,5 +57,10 @@ export class FaceSnapComponent {
       thumb: '' // miniature (optionnelle)
     }];
     this._lightbox.open(album, 0);
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

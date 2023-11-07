@@ -1,11 +1,11 @@
-<div class="face-snap-card" [ngClass]="{snapped: faceSnap.snapped}">
+<div class="face-snap-card" *ngIf="faceSnap$ | async as faceSnap" [ngClass]="{snapped: faceSnap.snapped}">
   <h2>{{ faceSnap.title | uppercase }}</h2>
   <p *ngIf="faceSnap.location" [ngStyle]="{'margin-top': '0px'}">📍 {{ faceSnap.location }}</p>
   <p [ngStyle]="{'font-size': '12px'}">Mis en ligne le {{ faceSnap.createdDate | date: "d MMM y à HH:mm" }}</p>
   <img [src]="faceSnap.imageUrl" [alt]="faceSnap.title" [ngStyle]="{'cursor': 'pointer'}" (click)="onOpenImage(faceSnap.imageUrl, faceSnap.description)">
   <p>{{ faceSnap.description }}</p>
   <p>
-    <button (click)="onSwitchSnap()"><span [ngStyle]="{ color: 'rgb(0, ' + faceSnap.snaps + ', 0)', 'cursor': 'pointer' }">🤌 {{ faceSnap.snaps }}</span></button>
+    <button (click)="onSwitchSnap(faceSnap.id)"><span [ngStyle]="{ color: 'rgb(0, ' + faceSnap.snaps + ', 0)', 'cursor': 'pointer' }">🤌 {{ faceSnap.snaps }}</span></button>
   </p>
 </div>
 <div class="back-button">

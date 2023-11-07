@@ -1,16 +1,19 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FaceSnapModel} from "../models/face-snap.model";
 import {FaceSnapsService} from "../services/face-snaps.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Lightbox, LightboxConfig} from "ngx-lightbox";
+import {Observable, Subject, takeUntil} from "rxjs";
 
 @Component({
   selector: 'app-single-face-snap',
   templateUrl: './single-face-snap.component.html',
   styleUrls: ['./single-face-snap.component.scss']
 })
-export class SingleFaceSnapComponent implements OnInit {
-  faceSnap!: FaceSnapModel;
+export class SingleFaceSnapComponent implements OnInit, OnDestroy {
+  faceSnap$!: Observable<FaceSnapModel>
+  private unsubscribe$ = new Subject<void>();
+
   constructor(
     private _faceSnapsService: FaceSnapsService,
     private _activatedRoute: ActivatedRoute,
@@ -22,19 +25,23 @@ export class SingleFaceSnapComponent implements OnInit {
   }
 
   ngOnInit() {
-    const snapId = +this._activatedRoute.snapshot.params['id']; // Ajouter le + au début de l'expression permet de cast une string de nombres en number.
-    this.faceSnap = this._faceSnapsService.getFaceSnapById(snapId);
+    const snapId = +this._activatedRoute.snapshot.params['id']; // Add '+' at the beginning of the expression cast a string of numbers in number.
+    this.faceSnap$ = this._faceSnapsService.getFaceSnapById(snapId);
   }
 
-  onSwitchSnap() {
-    if (this.faceSnap.snapped) {
-      this._faceSnapsService.snapFaceSnapById(this.faceSnap.id, 'unsnap');
-      this.faceSnap.snapped = false;
-    }
-    else {
-      this._faceSnapsService.snapFaceSnapById(this.faceSnap.id, 'snap');
-      this.faceSnap.snapped = true;
-    }
+  onSwitchSnap(faceSnapId: number) {
+    this._faceSnapsService.getFaceSnapById(faceSnapId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (faceSnap: FaceSnapModel) => {
+          if (faceSnap.snapped) {
+            this.faceSnap$ = this._faceSnapsService.snapFaceSnapById(faceSnapId, 'unsnap');
+          }
+          else {
+            this.faceSnap$ = this._faceSnapsService.snapFaceSnapById(faceSnapId, 'snap');
+          }
+        }
+      );
   }
 
   onOpenImage(imageUrl: string, description: string): void {
@@ -49,5 +56,10 @@ export class SingleFaceSnapComponent implements OnInit {
 
   onBack() {
     this._router.navigateByUrl('facesnaps');
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
