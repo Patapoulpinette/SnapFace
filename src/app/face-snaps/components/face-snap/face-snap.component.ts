@@ -1,31 +1,32 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FaceSnapModel} from "../models/face-snap.model";
-import {FaceSnapsService} from "../services/face-snaps.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {FaceSnapModel} from "../../../core/models/face-snap.model";
+import {FaceSnapsService} from "../../../core/services/face-snaps.service";
 import {Lightbox, LightboxConfig} from "ngx-lightbox";
+import {Router} from "@angular/router";
 import {Observable, Subject, takeUntil} from "rxjs";
 
 @Component({
-  selector: 'app-single-face-snap',
-  templateUrl: './single-face-snap.component.html',
-  styleUrls: ['./single-face-snap.component.scss']
+  selector: 'app-face-snap',
+  templateUrl: './face-snap.component.html',
+  styleUrls: ['./face-snap.component.scss']
 })
-export class SingleFaceSnapComponent implements OnInit, OnDestroy {
+export class FaceSnapComponent implements OnInit, OnDestroy {
+  @Input() faceSnap!: FaceSnapModel;
   faceSnap$!: Observable<FaceSnapModel>
   private unsubscribe$ = new Subject<void>();
 
   constructor(
     private _faceSnapsService: FaceSnapsService,
-    private _activatedRoute: ActivatedRoute,
-    private _router: Router,
     private _lightbox: Lightbox,
-    private _lightboxOption: LightboxConfig
+    private _lightboxOption: LightboxConfig,
+    private _router: Router
   ) {
-    this._lightboxOption.positionFromTop = 200;
+    _lightboxOption.positionFromTop = 200;
+    _lightboxOption.fadeDuration = 0.3;
   }
 
   ngOnInit() {
-    const snapId = +this._activatedRoute.snapshot.params['id']; // Add '+' at the beginning of the expression cast a string of numbers in number.
+    const snapId = this.faceSnap.id;
     this.faceSnap$ = this._faceSnapsService.getFaceSnapById(snapId);
   }
 
@@ -44,6 +45,10 @@ export class SingleFaceSnapComponent implements OnInit, OnDestroy {
       );
   }
 
+  onViewFaceSnap() {
+    this._router.navigateByUrl(`facesnaps/${this.faceSnap.id}`);
+  }
+
   onOpenImage(imageUrl: string, description: string): void {
     console.log('Image clicked ' + imageUrl + ' ' + description);
     const album = [{
@@ -52,10 +57,6 @@ export class SingleFaceSnapComponent implements OnInit, OnDestroy {
       thumb: '' // miniature (optionnelle)
     }];
     this._lightbox.open(album, 0);
-  }
-
-  onBack() {
-    this._router.navigateByUrl('facesnaps');
   }
 
   ngOnDestroy() {
