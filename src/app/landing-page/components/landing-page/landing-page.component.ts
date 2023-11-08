@@ -20,7 +20,7 @@ export class LandingPageComponent implements OnInit {
   }
 
   onSubmitForm(form: NgForm) {
-    console.log(`Merci pour cette info : ${form.value.userMail}, par contre on a pas de newsletter !`);
+    alert(`Merci pour cette info : ${form.value.userMail}, par contre on a pas de newsletter !`);
   }
 
   handleFocus() {
